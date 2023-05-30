@@ -9,14 +9,17 @@ const DRAW_CARD_API = "https://deckofcardsapi.com/api/deck"
  * Component for rendering Deck
  *
  * State:
- * - deck : object with deck info //TODO: example of object
- * - card : object with card info
+ * - deck : object with deck info
+ *   { success, deck_id, shuffled, remaining }
+ *
+ * - drawnCards : object with card info
+ *  [{code, image, images, value, suit}{...}]
  *
  * App -> Deck -> Card
  */
 function Deck() {
   const [deck, setDeck] = useState(null);
-  const [card, setCard] = useState(null); //TODO: change to previously drawn cards
+  const [drawnCards, setDrawnCards] = useState([]);
 
   //Gets deck when mounted for first time
   useEffect(function () {
@@ -35,24 +38,25 @@ function Deck() {
    * Returns alert if no cards remaining
    */
   async function handleDraw() {
-    if (deck.remaining < 1) return alert("No Cards Remaining");
-    console.log("deck=", deck)
 
     const response = await axios.get(`${DRAW_CARD_API}/${deck.deck_id}/draw/?count=1`);
 
-    setCard(response.data.cards[0]);
-    // setDeck(oldDeck => (
-    //   { ...oldDeck, remaining: response.data.remaining }
-    // ))
+    if (response.data.remaining < 1){
+        return alert("No Cards Remaining");
+    }
+
+    setDrawnCards(drawnCards => (
+     [ ...drawnCards, response.data.cards[0]])
+    );
   }
 
   if (!deck) return <h1>Loading Deck..</h1>;
 
   return (
     <div>
-      {card && <Card imageSrc={card.image} />}
-      <br/>
       <button onClick={handleDraw}>Draw Card</button>
+      <br/>
+      {drawnCards.map(card => <Card imageSrc={card.image}/>)}
     </div>
   );
 
