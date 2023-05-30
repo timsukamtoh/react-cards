@@ -9,14 +9,14 @@ const DRAW_CARD_API = "https://deckofcardsapi.com/api/deck"
  * Component for rendering Deck
  *
  * State:
- * - deck : object with deck info
+ * - deck : object with deck info //TODO: example of object
  * - card : object with card info
  *
  * App -> Deck -> Card
  */
 function Deck() {
   const [deck, setDeck] = useState(null);
-  const [card, setCard] = useState(null);
+  const [card, setCard] = useState(null); //TODO: change to previously drawn cards
 
   //Gets deck when mounted for first time
   useEffect(function () {
@@ -41,9 +41,9 @@ function Deck() {
     const response = await axios.get(`${DRAW_CARD_API}/${deck.deck_id}/draw/?count=1`);
 
     setCard(response.data.cards[0]);
-    setDeck(oldDeck => (
-      { ...oldDeck, remaining: response.data.remaining }
-    ))
+    // setDeck(oldDeck => (
+    //   { ...oldDeck, remaining: response.data.remaining }
+    // ))
   }
 
   if (!deck) return <h1>Loading Deck..</h1>;
